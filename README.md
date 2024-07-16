@@ -4,7 +4,7 @@ A cli tool to time your study sessions in active/rest intervals.
 
 Starting it with the default inputs is very simple.
 
-```bash
+```
 $ pomo start
 
 🍎 Let's get started!
@@ -17,7 +17,7 @@ $ pomo start
 
 For more detailed and specific sessions, you can use `pomo session`.
 
-```bash
+```
 $ pomo session 
 
 🍎 What are you studying? Biomed
@@ -36,7 +36,7 @@ $ pomo session
 
 You can set your active, rest times, and more with `pomo config`.
 
-```bash
+```
 $ pomo config -a 45m -r 15m
 ```
 
