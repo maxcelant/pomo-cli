@@ -57,10 +57,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	for _, arg := range args[1:] {
-		if arg == "start" {
-			handleStartCommand(args[2:])
-			break
-		}
-	}
+  switch args[1] {
+    case "start": 
+      handleStartCommand(args[2:])
+    default:
+      usage()
+  }
 }
