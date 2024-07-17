@@ -5,21 +5,21 @@ import (
 )
 
 func TestNewState(t *testing.T) {
-  id := state.INIT
+  id := INIT 
   literal := "active"
   symbol := "🟢"
   
   state := New(id, literal, symbol)
   
-  if state.id != id {
-    t.Errorf("Expected id %d, but got %d", id, state.id)
+  if state.Id != id {
+    t.Errorf("Expected id %d, but got %d", id, state.Id)
   }
   
-  if state.literal != literal {
-    t.Errorf("Expected literal %s, but got %s", literal, state.literal)
+  if state.Literal != literal {
+    t.Errorf("Expected literal %s, but got %s", literal, state.Literal)
   }
   
-  if state.symbol != symbol {
-    t.Errorf("Expected symbol %s, but got %s", symbol, state.symbol)
+  if state.Symbol != symbol {
+    t.Errorf("Expected symbol %s, but got %s", symbol, state.Symbol)
   }
 }
