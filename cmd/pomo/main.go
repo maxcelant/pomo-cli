@@ -12,7 +12,9 @@ import (
 )
 
 func usage() {
-	fmt.Println("Usage: pomo [command]")
+	fmt.Printf("Usage: pomo [command]\n\n")
+  fmt.Println("       Commands           Actions")
+  fmt.Println("       start              Begin a simple pomodoro interval session.")
 }
 
 func clearScreen() {
