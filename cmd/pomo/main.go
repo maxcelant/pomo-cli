@@ -71,7 +71,7 @@ func timer(timeAmount int, curState State, interval int) {
 	}
 }
 
-func waitUserResponse(s State) {
+func awaitUserRes(s State) {
   clearScreen()
   if s == ACTIVE {
     fmt.Printf("🍎 Active session done! Ready to start break?")
@@ -98,10 +98,10 @@ func handleStartCommand(subcommands []string) {
 	for i := 0; i < intervals; i++ {
 		curState = ACTIVE
 		timer(activeTime, curState, i)
-    waitUserResponse(curState)
+    awaitUserRes(curState)
 		curState = BREAK
 		timer(breakTime, curState, i)
-    waitUserResponse(curState)
+    awaitUserRes(curState)
 	}
 }
 
