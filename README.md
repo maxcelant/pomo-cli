@@ -2,6 +2,15 @@
 
 A cli tool to time your study sessions in active/rest intervals.
 
+### Setting up
+
+```
+$ go build -o pomo ./cmd/pomo
+$ sudo mv pomo /usr/local/bin/
+```
+
+### Commands
+
 Starting it with the default inputs is very simple.
 
 ```
