@@ -1,18 +1,15 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-  "bufio"
 	"os"
+	"strings"
 	"time"
-  "strings"
 
-  "github.com/maxcelant/pomo-cli/cmd/state"
+	"github.com/maxcelant/pomo-cli/cmd/manager"
+	"github.com/maxcelant/pomo-cli/cmd/state"
 )
-
-var activeTime int = 25
-var breakTime int = 5
-var intervals int = 3
 
 func usage() {
 	fmt.Println("Usage: pomo [command]")
@@ -22,22 +19,23 @@ func clearScreen() {
 	fmt.Print("\033[H\033[2J")
 }
 
-func timer(timeAmount int, curState state.State, interval int) {
-	for t := 0; t < timeAmount; t++ {
+func timer(sm *manager.StateManager) {
+	for t := 0; t < sm.State.Duration; t++ {
 		select {
 		case <-time.After(1 * time.Second):
+      fmt.Printf("t: %d", t)
 			clearScreen()
 			fmt.Println("🍎 Time to focus")
-			fmt.Printf("   State: %s %s\n", curState.Literal, curState.Symbol)
-			fmt.Printf("   Interval: %d\n", interval)
-			fmt.Printf("   Time Remaining: %ds\n", timeAmount-t)
+			fmt.Printf("   State: %s %s\n", sm.State.Literal, sm.State.Symbol)
+			fmt.Printf("   Interval: %d\n", sm.Intervals)
+			fmt.Printf("   Time Remaining: %ds\n", sm.State.Duration-t)
 		}
 	}
 }
 
-func awaitUserRes(s state.State) {
+func awaitUserRes(sm *manager.StateManager) {
   clearScreen()
-  if s.Id == state.ACTIVE {
+  if sm.State.Id == state.ACTIVE {
     fmt.Printf("🍎 Active session done! Ready to start break?")
   } else {
     fmt.Printf("🍎 Break session done! Ready to start studying?")
@@ -52,20 +50,18 @@ func awaitUserRes(s state.State) {
   }
 }
 
-func handleStartCommand(subcommands []string) {
-	curState := state.Get(state.INIT)
-
+func handleStartCommand(sm *manager.StateManager, subcommands []string) {
 	for _, s := range subcommands {
 		fmt.Printf("%s\n", s)
 	}
 
-	for i := 0; i < intervals; i++ {
-		curState = state.Get(state.ACTIVE) 
-		timer(activeTime, curState, i)
-    awaitUserRes(curState)
-		curState = state.Get(state.BREAK)
-		timer(breakTime, curState, i)
-    awaitUserRes(curState)
+	for ; sm.Intervals > 0; sm.DecrementInterval() {
+    sm.UpdateState(state.Get(state.ACTIVE))
+		timer(sm)
+    awaitUserRes(sm)
+    sm.UpdateState(state.Get(state.BREAK))
+		timer(sm)
+    awaitUserRes(sm)
 	}
 }
 
@@ -77,9 +73,11 @@ func main() {
 		os.Exit(1)
 	}
 
+  sm := manager.New(state.Get(state.INIT), 3)
+
 	switch args[1] {
 	case "start":
-		handleStartCommand(args[2:])
+		handleStartCommand(sm, args[2:])
 	default:
 		usage()
 	}
