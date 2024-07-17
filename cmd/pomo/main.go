@@ -6,16 +6,8 @@ import (
 	"os"
 	"time"
   "strings"
-)
 
-type State int
-
-const (
-	INIT State = iota
-	ACTIVE
-	BREAK
-  WAITING
-	DONE
+  "github.com/maxcelant/pomo-cli/cmd/state"
 )
 
 var activeTime int = 25
@@ -26,54 +18,26 @@ func usage() {
 	fmt.Println("Usage: pomo [command]")
 }
 
-func getStateRepr(s State) string {
-	if s == 0 {
-		return "Initial"
-	} else if s == 1 {
-		return "Active"
-	} else if s == 2 {
-		return "Break"
-	} else if s == 3 {
-    return "Waiting"
-  }
-	return "Done"
-}
-
-func getStateSymbol(s State) string {
-	if s == 0 {
-		return "🔵"
-	} else if s == 1 {
-		return "🟢"
-	} else if s == 2 {
-		return "🔴"
-	} else if s == 3 {
-    return "🟣"
-  }
-	return "⚫️"
-}
-
 func clearScreen() {
 	fmt.Print("\033[H\033[2J")
 }
 
-func timer(timeAmount int, curState State, interval int) {
-	stateRepr := getStateRepr(curState)
-  stateSymbol := getStateSymbol(curState)
+func timer(timeAmount int, curState state.State, interval int) {
 	for t := 0; t < timeAmount; t++ {
 		select {
 		case <-time.After(1 * time.Second):
 			clearScreen()
 			fmt.Println("🍎 Time to focus")
-			fmt.Printf("   State: %s %s\n", stateRepr, stateSymbol)
+			fmt.Printf("   State: %s %s\n", curState.Literal, curState.Symbol)
 			fmt.Printf("   Interval: %d\n", interval)
 			fmt.Printf("   Time Remaining: %ds\n", timeAmount-t)
 		}
 	}
 }
 
-func awaitUserRes(s State) {
+func awaitUserRes(s state.State) {
   clearScreen()
-  if s == ACTIVE {
+  if s.Id == state.ACTIVE {
     fmt.Printf("🍎 Active session done! Ready to start break?")
   } else {
     fmt.Printf("🍎 Break session done! Ready to start studying?")
@@ -89,17 +53,17 @@ func awaitUserRes(s State) {
 }
 
 func handleStartCommand(subcommands []string) {
-	curState := INIT
+	curState := state.Get(state.INIT)
 
 	for _, s := range subcommands {
 		fmt.Printf("%s\n", s)
 	}
 
 	for i := 0; i < intervals; i++ {
-		curState = ACTIVE
+		curState = state.Get(state.ACTIVE) 
 		timer(activeTime, curState, i)
     awaitUserRes(curState)
-		curState = BREAK
+		curState = state.Get(state.BREAK)
 		timer(breakTime, curState, i)
     awaitUserRes(curState)
 	}
