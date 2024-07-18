@@ -4,13 +4,13 @@ import "fmt"
 import "os"
 import "bufio"
 import "strings"
-import "github.com/maxcelant/pomo-cli/cmd/manager"
-import "github.com/maxcelant/pomo-cli/cmd/timer"
-import "github.com/maxcelant/pomo-cli/cmd/state"
-import "github.com/maxcelant/pomo-cli/cmd/screen"
+import "github.com/maxcelant/pomo-cli/internal/manager"
+import "github.com/maxcelant/pomo-cli/internal/timer"
+import "github.com/maxcelant/pomo-cli/internal/state"
+import "github.com/maxcelant/pomo-cli/internal/screen"
 
 type Session struct {
-	sm        manager.StateManager
+	manager.StateManager
 	timer     timer.Timer
 	intervals int
 }
@@ -20,21 +20,21 @@ func New(sm manager.StateManager, t timer.Timer, i int) *Session {
 }
 
 func (s Session) Loop(nextState state.ID) {
-	s.sm.UpdateState(state.Get(nextState))
-	s.timer.SetDuration(s.sm.State.Duration)
+	s.UpdateState(state.Get(nextState))
+	s.timer.SetDuration(s.State.Duration)
 	s.timer.Time(func(t int) {
 		screen.Clear()
 		fmt.Println("🍎 Time to focus")
-		fmt.Printf("   State: %s %s\n", s.sm.State.Literal, s.sm.State.Symbol)
+		fmt.Printf("   State: %s %s\n", s.State.Literal, s.State.Symbol)
 		fmt.Printf("   Interval: %d\n", s.intervals)
-		fmt.Printf("   Time Remaining: %ds\n", s.sm.State.Duration-t)
+		fmt.Printf("   Time Remaining: %ds\n", s.State.Duration-t)
 	})
 	s.awaitUserRes()
 }
 
 func (s *Session) awaitUserRes() {
 	screen.Clear()
-	if s.sm.State.Id == state.ACTIVE {
+	if s.State.Id == state.ACTIVE {
 		fmt.Printf("🍎 Active session done! Ready to start break?")
 	} else {
 		fmt.Printf("🍎 Break session done! Ready to start studying?")

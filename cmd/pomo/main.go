@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/maxcelant/pomo-cli/cmd/manager"
-	"github.com/maxcelant/pomo-cli/cmd/screen"
-	"github.com/maxcelant/pomo-cli/cmd/session"
-	"github.com/maxcelant/pomo-cli/cmd/state"
-	"github.com/maxcelant/pomo-cli/cmd/timer"
+	"github.com/maxcelant/pomo-cli/internal/manager"
+	"github.com/maxcelant/pomo-cli/internal/screen"
+	"github.com/maxcelant/pomo-cli/internal/session"
+	"github.com/maxcelant/pomo-cli/internal/state"
+	"github.com/maxcelant/pomo-cli/internal/timer"
 )
 
 func handleStartCommand(session *session.Session, subcommands []string) {

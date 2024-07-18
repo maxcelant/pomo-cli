@@ -1,6 +1,6 @@
 package manager
 
-import "github.com/maxcelant/pomo-cli/cmd/state"
+import "github.com/maxcelant/pomo-cli/internal/state"
 
 type StateManager struct {
 	State state.State

@@ -16,7 +16,7 @@ Starting it with the default inputs is very simple.
 ```
 $ pomo start
 
-🍎 Let's get started!
+🍎 Time to focus
    State: Active 🟢
    Interval: 1 
    Time Remaining: 24:59s
