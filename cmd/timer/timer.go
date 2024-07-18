@@ -9,11 +9,11 @@ type Timer struct {
   duration int
 }
 
-func New() *Timer {
-  return &Timer{0}
+func New() Timer {
+  return Timer{0}
 }
 
-func (t *Timer) countdown(out chan<- int) {
+func (t Timer) countdown(out chan<- int) {
   for i := 0; i < t.duration; i++ {
     select {
     case <-time.After(1 * time.Second):
@@ -23,7 +23,7 @@ func (t *Timer) countdown(out chan<- int) {
   close(out)
 }
 
-func (t *Timer) Time(cb TimerCallback) {
+func (t Timer) Time(cb TimerCallback) {
   out := make(chan int)
 
   go t.countdown(out)
