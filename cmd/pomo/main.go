@@ -32,7 +32,13 @@ func awaitUserRes(sm *manager.StateManager) {
 func sessionLoop(sm *manager.StateManager, timer* timer.Timer, nextState state.ID) {
   sm.UpdateState(state.Get(nextState))
   timer.SetDuration(sm.State.Duration)
-  timer.Time(sm)
+  timer.Time(func (t int) {
+    screen.Clear()
+    fmt.Println("🍎 Time to focus")
+    fmt.Printf("   State: %s %s\n", sm.State.Literal, sm.State.Symbol)
+    fmt.Printf("   Interval: %d\n", sm.Intervals)
+    fmt.Printf("   Time Remaining: %ds\n", sm.State.Duration-t)
+  })
   awaitUserRes(sm)
 }
 

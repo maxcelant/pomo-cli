@@ -6,3 +6,4 @@
 - Make the command sessions goroutines so the user can stop them by sending a signal.
 - Create a `handler` for the commands to take care of answering to user responses and printing messages to the user.
 - Probably going to need a `Timer` struct to take care of the count down and triggering the handler
+- Need to create a `Session` struct to handle the logic of hooking together the state manager and the timer.

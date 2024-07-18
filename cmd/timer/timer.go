@@ -2,9 +2,8 @@
 package timer
 
 import "time"
-import "fmt"
-import "github.com/maxcelant/pomo-cli/cmd/manager"
-import "github.com/maxcelant/pomo-cli/cmd/screen"
+
+type TimerCallback func(currentTime int)
 
 type Timer struct {
   duration int
@@ -24,17 +23,13 @@ func (t *Timer) countdown(out chan<- int) {
   close(out)
 }
 
-func (t *Timer) Time(sm *manager.StateManager) {
+func (t *Timer) Time(cb TimerCallback) {
   out := make(chan int)
 
   go t.countdown(out)
 
   for time := range out {
-    screen.Clear()
-    fmt.Println("🍎 Time to focus")
-    fmt.Printf("   State: %s %s\n", sm.State.Literal, sm.State.Symbol)
-    fmt.Printf("   Interval: %d\n", sm.Intervals)
-    fmt.Printf("   Time Remaining: %ds\n", sm.State.Duration-time)
+    cb(time)
   }
 }
 

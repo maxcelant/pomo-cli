@@ -29,8 +29,8 @@ func New(id ID, literal string, symbol string, duration int) State {
 
 var States = map[ID]State{
 	INIT:    New(INIT, "Initial", "🔵", 0),
-	ACTIVE:  New(ACTIVE, "Active", "🟢", 25),
-	BREAK:   New(BREAK, "Break", "🔴", 10),
+	ACTIVE:  New(ACTIVE, "Active", "🟢", 10),
+	BREAK:   New(BREAK, "Break", "🔴", 5),
 	WAITING: New(WAITING, "Waiting", "🕒", 0),
 	PAUSE:   New(PAUSE, "Pause", "⏸️", 0),
 	DONE:    New(DONE, "Done", "✅", 0),
