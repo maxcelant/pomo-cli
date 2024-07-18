@@ -4,7 +4,7 @@ A cli tool to time your study sessions in active/rest intervals.
 
 ### Quick setup guide
 
-```
+```bash
 $ git clone https://github.com/maxcelant/pomo-cli.git
 $ cd pomo-cli
 $ chmod +x ./scripts/build.sh
