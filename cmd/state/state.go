@@ -12,18 +12,18 @@ const (
 )
 
 type State struct {
-	Id      ID
-	Literal string
-	Symbol  string
-  Duration int 
+	Id       ID
+	Literal  string
+	Symbol   string
+	Duration int
 }
 
 func New(id ID, literal string, symbol string, duration int) State {
 	return State{
-		Id:      id,
-		Literal: literal,
-		Symbol:  symbol,
-    Duration: duration,
+		Id:       id,
+		Literal:  literal,
+		Symbol:   symbol,
+		Duration: duration,
 	}
 }
 
