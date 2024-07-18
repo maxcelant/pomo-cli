@@ -5,8 +5,8 @@ A cli tool to time your study sessions in active/rest intervals.
 ### Setting up
 
 ```
-$ go build -o pomo ./cmd/pomo
-$ sudo mv pomo /usr/local/bin/
+$ chmod +x ./scripts/build.sh
+$ ./scripts/build.sh
 ```
 
 ### Commands
