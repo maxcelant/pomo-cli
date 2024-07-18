@@ -7,3 +7,7 @@
 - Create a `handler` for the commands to take care of answering to user responses and printing messages to the user.
 - Probably going to need a `Timer` struct to take care of the count down and triggering the handler
 - Need to create a `Session` struct to handle the logic of hooking together the state manager and the timer.
+
+### Todo
+
+- [ ] Create a `config` command to read from command line and yaml file

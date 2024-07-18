@@ -18,7 +18,7 @@ func handleStartCommand(session *session.Session, subcommands []string) {
 
 	for {
 		session.Loop(state.ACTIVE)
-		session.Loop(state.BREAK)
+		session.Loop(state.REST)
 		session.IncrementInterval()
 	}
 }
