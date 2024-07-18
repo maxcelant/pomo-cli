@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/maxcelant/pomo-cli/cmd/manager"
 	"github.com/maxcelant/pomo-cli/cmd/state"
+	"github.com/maxcelant/pomo-cli/cmd/timer"
 )
 
 func usage() {
@@ -17,26 +17,7 @@ func usage() {
   fmt.Println("       start              Begin a simple pomodoro interval session.")
 }
 
-func clearScreen() {
-	fmt.Print("\033[H\033[2J")
-}
-
-func timer(sm *manager.StateManager) {
-	for t := 0; t < sm.State.Duration; t++ {
-		select {
-		case <-time.After(1 * time.Second):
-      fmt.Printf("t: %d", t)
-			clearScreen()
-			fmt.Println("🍎 Time to focus")
-			fmt.Printf("   State: %s %s\n", sm.State.Literal, sm.State.Symbol)
-			fmt.Printf("   Interval: %d\n", sm.Intervals)
-			fmt.Printf("   Time Remaining: %ds\n", sm.State.Duration-t)
-		}
-	}
-}
-
 func awaitUserRes(sm *manager.StateManager) {
-  clearScreen()
   if sm.State.Id == state.ACTIVE {
     fmt.Printf("🍎 Active session done! Ready to start break?")
   } else {
@@ -52,18 +33,21 @@ func awaitUserRes(sm *manager.StateManager) {
   }
 }
 
-func handleStartCommand(sm *manager.StateManager, subcommands []string) {
+func handleStartCommand(sm *manager.StateManager, timer *timer.Timer, subcommands []string) {
 	for _, s := range subcommands {
 		fmt.Printf("%s\n", s)
 	}
 
-	for ; sm.Intervals > 0; sm.DecrementInterval() {
+	for {
     sm.UpdateState(state.Get(state.ACTIVE))
-		timer(sm)
+    timer.SetDuration(sm.State.Duration)
+		timer.Time(sm)
     awaitUserRes(sm)
     sm.UpdateState(state.Get(state.BREAK))
-		timer(sm)
+    timer.SetDuration(sm.State.Duration)
+		timer.Time(sm)
     awaitUserRes(sm)
+    sm.IncrementInterval()
 	}
 }
 
@@ -75,11 +59,12 @@ func main() {
 		os.Exit(1)
 	}
 
-  sm := manager.New(state.Get(state.INIT), 3)
+  sm := manager.New(state.Get(state.INIT), 0)
+  timer := timer.New()
 
 	switch args[1] {
 	case "start":
-		handleStartCommand(sm, args[2:])
+		handleStartCommand(sm, timer, args[2:])
 	default:
 		usage()
 	}

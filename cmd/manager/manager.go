@@ -16,6 +16,6 @@ func (sm *StateManager) UpdateState(newState state.State) {
   sm.State = newState
 }
 
-func (sm *StateManager) DecrementInterval() {
-  sm.Intervals--
+func (sm *StateManager) IncrementInterval() {
+  sm.Intervals++
 }
