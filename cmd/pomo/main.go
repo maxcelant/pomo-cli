@@ -9,15 +9,11 @@ import (
 	"github.com/maxcelant/pomo-cli/cmd/manager"
 	"github.com/maxcelant/pomo-cli/cmd/state"
 	"github.com/maxcelant/pomo-cli/cmd/timer"
+	"github.com/maxcelant/pomo-cli/cmd/screen"
 )
 
-func usage() {
-	fmt.Printf("Usage: pomo [command]\n\n")
-  fmt.Println("       Commands           Actions")
-  fmt.Println("       start              Begin a simple pomodoro interval session.")
-}
-
 func awaitUserRes(sm *manager.StateManager) {
+  screen.Clear()
   if sm.State.Id == state.ACTIVE {
     fmt.Printf("🍎 Active session done! Ready to start break?")
   } else {
@@ -55,7 +51,7 @@ func main() {
 	args := os.Args
 
 	if len(args) < 2 {
-		usage()
+		screen.Usage()
 		os.Exit(1)
 	}
 
@@ -66,6 +62,6 @@ func main() {
 	case "start":
 		handleStartCommand(sm, timer, args[2:])
 	default:
-		usage()
+		screen.Usage()
 	}
 }
