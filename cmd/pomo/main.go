@@ -29,20 +29,21 @@ func awaitUserRes(sm *manager.StateManager) {
   }
 }
 
+func sessionLoop(sm *manager.StateManager, timer* timer.Timer, nextState state.ID) {
+  sm.UpdateState(state.Get(nextState))
+  timer.SetDuration(sm.State.Duration)
+  timer.Time(sm)
+  awaitUserRes(sm)
+}
+
 func handleStartCommand(sm *manager.StateManager, timer *timer.Timer, subcommands []string) {
 	for _, s := range subcommands {
 		fmt.Printf("%s\n", s)
 	}
 
 	for {
-    sm.UpdateState(state.Get(state.ACTIVE))
-    timer.SetDuration(sm.State.Duration)
-		timer.Time(sm)
-    awaitUserRes(sm)
-    sm.UpdateState(state.Get(state.BREAK))
-    timer.SetDuration(sm.State.Duration)
-		timer.Time(sm)
-    awaitUserRes(sm)
+    sessionLoop(sm, timer, state.ACTIVE)
+    sessionLoop(sm, timer, state.BREAK)
     sm.IncrementInterval()
 	}
 }
