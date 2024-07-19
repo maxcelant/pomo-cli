@@ -15,8 +15,8 @@ var flags = map[string]Flag{
 	"--active": {Datatype: "int", Name: "active"},
 	"-r":       {Datatype: "int", Name: "rest"},
 	"--rest":   {Datatype: "int", Name: "rest"},
-	"-d":       {Datatype: "bool", Name: "detach"},
-	"--detach": {Datatype: "bool", Name: "detach"},
+	"-s":       {Datatype: "bool", Name: "silent"},
+	"--silent": {Datatype: "bool", Name: "silent"},
 }
 
 func handleInt(f Flag, value string) (int, error) {

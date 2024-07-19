@@ -13,28 +13,21 @@ import (
 )
 
 func handleStartCommand(session *session.Session, subcommands []string) {
-	out, err := subcommand.Handler(subcommands, map[string]interface{}{"detach": false})
+	options, err := subcommand.Handler(subcommands, map[string]interface{}{"silent": false})
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
-
-	fmt.Println("Subcommand values:", out)
-
-	for {
-		session.Loop(state.ACTIVE)
-		session.Loop(state.REST)
-		session.IncrementInterval()
-	}
+  session.Start(options)
 }
 
 func handleConfigCommand(subcommands []string) {
-	out, err := subcommand.Handler(subcommands, map[string]interface{}{"active": 0, "rest": 0})
+	options, err := subcommand.Handler(subcommands, map[string]interface{}{"active": 0, "rest": 0})
 	if err != nil {
 		fmt.Printf("%s", err)
 		os.Exit(1)
 	}
-	fmt.Println("Subcommand values:", out)
+	fmt.Println("Options:", options)
 }
 
 func main() {

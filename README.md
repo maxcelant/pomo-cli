@@ -24,7 +24,7 @@ $ pomo start
    Time Remaining: 24:59s
 ```
 
-- `-d, --detach`: Will run in the background and only notify when your time is up.
+- `-s, --silent`: Will run in the background and only notify when your time is up.
 
 For more detailed and specific sessions, you can use `pomo session`.
 

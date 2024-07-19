@@ -13,26 +13,39 @@ type Session struct {
 	manager.StateManager
 	timer     timer.Timer
 	intervals int
+  options   map[string]interface{}
 }
 
 func New(sm manager.StateManager, t timer.Timer, i int) *Session {
-	return &Session{sm, t, i}
+	return &Session{sm, t, i, make(map[string]interface{})}
 }
 
-func (s Session) Loop(nextState state.ID) {
+func (s *Session) Start(options map[string]interface{}) {
+  s.options = options
+	for {
+		s.loop(state.ACTIVE)
+		s.loop(state.REST)
+		s.incrementInterval()
+	}
+}
+
+func (s Session) loop(nextState state.ID) {
 	s.UpdateState(state.Get(nextState))
 	s.timer.SetDuration(s.State.Duration)
 	s.timer.Time(func(t int) {
-		screen.Clear()
-		fmt.Println("🍎 Time to focus")
-		fmt.Printf("   State: %s %s\n", s.State.Literal, s.State.Symbol)
-		fmt.Printf("   Interval: %d\n", s.intervals)
-		fmt.Printf("   Time Remaining: %ds\n", s.State.Duration-t)
+    if s.options["silent"] == true {
+      return 
+    }
+    screen.Clear()
+    fmt.Println("🍎 Time to focus")
+    fmt.Printf("   State: %s %s\n", s.State.Literal, s.State.Symbol)
+    fmt.Printf("   Interval: %d\n", s.intervals)
+    fmt.Printf("   Time Remaining: %ds\n", s.State.Duration-t)
 	})
-	s.awaitUserRes()
+	s.awaitUserResponse()
 }
 
-func (s *Session) awaitUserRes() {
+func (s *Session) awaitUserResponse() {
 	screen.Clear()
 	if s.State.Id == state.ACTIVE {
 		fmt.Printf("🍎 Active session done! Ready to start break?")
@@ -49,6 +62,6 @@ func (s *Session) awaitUserRes() {
 	}
 }
 
-func (s *Session) IncrementInterval() {
+func (s *Session) incrementInterval() {
 	s.intervals++
 }
