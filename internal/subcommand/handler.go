@@ -6,16 +6,27 @@ import (
 	"strconv"
 )
 
-type Flag struct {
+type flag struct {
 	datatype string
 	name     string
 }
 
-var flags = map[string]Flag{
+var flags = map[string]flag{
 	"-a":       {datatype: "int", name: "active"},
 	"--active": {datatype: "int", name: "active"},
 	"-r":       {datatype: "int", name: "rest"},
 	"--rest":   {datatype: "int", name: "rest"},
+	"-d":       {datatype: "bool", name: "detach"},
+	"--detach": {datatype: "bool", name: "detach"},
+}
+
+func handleInt(f flag, value string) int {
+	val, err := strconv.Atoi(value)
+	if err != nil {
+		fmt.Printf("value for flag '%s' is not a valid integer: %s", f.name, value)
+		os.Exit(1)
+	}
+	return val
 }
 
 func Handler(subcommands []string, out map[string]interface{}) (map[string]interface{}, error) {
@@ -34,22 +45,22 @@ func Handler(subcommands []string, out map[string]interface{}) (map[string]inter
 			return nil, fmt.Errorf("flag '%s' is not a viable flag", flag)
 		}
 
-		if i+1 >= len(subcommands) {
+		if (f.datatype == "int" || f.datatype == "string") && i+1 >= len(subcommands) {
 			return nil, fmt.Errorf("flag '%s' expects a value but none was provided", flag)
 		}
 
-		if f.datatype != "int" {
+		if f.datatype != "int" && f.datatype != "bool" {
 			return nil, fmt.Errorf("datatype '%s' not implemented yet", f.datatype)
 		}
 
-		nextValue := subcommands[i+1]
-		duration, err := strconv.Atoi(nextValue)
-		if err != nil {
-			return nil, fmt.Errorf("value for flag '%s' is not a valid integer: %s", flag, nextValue)
+		if f.datatype == "int" {
+			out[f.name] = handleInt(f, subcommands[i+1])
+			i++
 		}
 
-		out[f.name] = duration
-		i++
+		if f.datatype == "bool" {
+			out[f.name] = true
+		}
 	}
 
 	return out, nil
