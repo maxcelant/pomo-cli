@@ -31,7 +31,7 @@ func handleStartCommand(session *session.Session, subcommands []string) {
 func handleConfigCommand(subcommands []string) {
 	out, err := subcommand.Handler(subcommands, map[string]interface{}{"active": 0, "rest": 0})
 	if err != nil {
-		fmt.Printf("Error: %s\n", err)
+		fmt.Printf("%s", err)
 		os.Exit(1)
 	}
 	fmt.Println("Subcommand values:", out)

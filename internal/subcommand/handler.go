@@ -38,15 +38,15 @@ func Handler(subcommands []string, out map[string]interface{}) (map[string]inter
 	}()
 
 	for i := 0; i < len(subcommands); i++ {
-		flag := subcommands[i]
+		cur := subcommands[i]
 
-		f, found := flags[flag]
+		f, found := flags[cur]
 		if !found {
-			return nil, fmt.Errorf("flag '%s' is not a viable flag", flag)
+			return nil, fmt.Errorf("flag '%s' is not a viable flag", cur)
 		}
 
 		if (f.datatype == "int" || f.datatype == "string") && i+1 >= len(subcommands) {
-			return nil, fmt.Errorf("flag '%s' expects a value but none was provided", flag)
+			return nil, fmt.Errorf("flag '%s' expects a value but none was provided", cur)
 		}
 
 		if f.datatype != "int" && f.datatype != "bool" {
