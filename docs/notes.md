@@ -11,3 +11,4 @@
 ### Todo
 
 - [ ] Create a `config` command to read from command line and yaml file
+
