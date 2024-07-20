@@ -13,7 +13,7 @@ $ ./scripts/build.sh
 
 ### Commands
 
-Starting it with the default inputs is very simple.
+Starting it with the default inputs is very simple using `pomo start`
 
 ```
 $ pomo start
@@ -25,25 +25,19 @@ $ pomo start
 ```
 
 - `-s, --silent`: Will run in the background and only notify when your time is up.
+- `-i, --intervals`: Set the number of intervals you want to accomplish.
+- `-l, --log`: It will prompt you to log your accomplishments after every rest.
 
-For more detailed and specific sessions, you can use `pomo session`.
+
+You can start your pomodoro timer server with `pomo server` (NOT IMPLEMENTED YET)
 
 ```
-$ pomo session 
+$ pomo server
 
-🍎 What are you studying? Biomed
-🍎 How many intervals do you plan to do? 3 
-
-
-🍎 Let's get started!
-   State: Active 🟢
-   Interval: 1/3
-   Time Remaining: 24:59s
-   ...
-
-🍎 Time is up!
-🍎 Create a log entry for this interval? [y/n]: 
+  🍎 Pomo server running on port 3000!
 ```
+
+- `-p, --port`: denote which port you want to run the server on.
 
 You can set your active, rest times, and more with `pomo config`.
 
