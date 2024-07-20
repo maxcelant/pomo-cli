@@ -52,6 +52,7 @@ func (c *ConfigCommandHandler) Handle() {
 		os.Exit(1)
 	}
   fileio.WriteToLocalYaml(options)
+  fmt.Println("~/.pomo/pomo.yaml updated successfully ✅")
 }
 
 func NewHandler(commandName string, session *session.Session, subcommands []string) (Handler, error) {
