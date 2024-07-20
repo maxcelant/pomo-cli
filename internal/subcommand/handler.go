@@ -48,6 +48,9 @@ func Handler(subcommands []string, out map[string]interface{}) (map[string]inter
 			}
 			out[f.Name] = value
 			i++
+    case "string":
+      out[f.Name] = subcommands[i+1]
+      i++
 		case "bool":
 			out[f.Name] = true
 		default:
