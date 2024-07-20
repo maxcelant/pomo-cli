@@ -13,23 +13,43 @@ import (
 	"github.com/maxcelant/pomo-cli/internal/timer"
 )
 
-func handleStartCommand(session *session.Session, subcommands []string) {
-	options, err := subcommand.Handler(subcommands, map[string]interface{}{"silent": false})
+type Handler interface {
+  Handle() 
+}
+
+type StartCommandHandler struct {
+  *session.Session
+  subcommands []string
+}
+
+type ConfigCommandHandler struct {
+  subcommands []string
+}
+
+func NewStartCommandHandler(session *session.Session, subcommands []string) *StartCommandHandler {
+  return &StartCommandHandler{
+    session,
+    subcommands,
+  }
+}
+
+func NewConfigCommandHandler(subcommands []string) *ConfigCommandHandler {
+  return &ConfigCommandHandler{
+    subcommands,
+  }
+}
+
+func (s *StartCommandHandler) Handle() {
+	options, err := subcommand.Handler(s.subcommands, map[string]interface{}{"silent": false})
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
-  session.Start(options)
+  s.Start(options)
 }
 
-func handleSessionCommand(session *session.Session, subcommands []string) {
-  fmt.Println("Not implemented yet.")
-}
-
-func handleConfigCommand(subcommands []string) {
-  // todo: read from file first and populate the values there into our defaults
-  // so that we don't override them 
-  options, err := subcommand.Handler(subcommands, map[string]interface{}{"active": 0, "rest": 0, "link":""})
+func (c *ConfigCommandHandler) Handle() {
+  options, err := subcommand.Handler(c.subcommands, map[string]interface{}{"active": 0, "rest": 0, "link":""})
 	if err != nil {
 		fmt.Printf("%s", err)
 		os.Exit(1)
@@ -49,14 +69,18 @@ func main() {
 	timer := timer.New()
 	session := session.New(sm, timer, 1)
 
-	switch args[1] {
-	case "start":
-		handleStartCommand(session, args[2:])
-  case "session":
-    handleSessionCommand(session, args[2:])
-	case "config":
-		handleConfigCommand(args[2:])
-	default:
-		screen.Usage()
-	}
+  handlers := map[string]Handler{
+    "start": NewStartCommandHandler(session, args[2:]),
+    "session": NewStartCommandHandler(session, args[2:]),
+    "config": NewConfigCommandHandler(args[2:]),
+  }
+
+  handler, ok := handlers[args[1]]
+  if !ok {
+    fmt.Println("Error: invalid command")
+    screen.Usage()
+    os.Exit(1)
+  }
+
+  handler.Handle()
 }
