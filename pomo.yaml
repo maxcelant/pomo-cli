@@ -1,3 +1,4 @@
 pomo:
-  active: 25
-  rest: 15
+  active: 60
+  rest: 30
+  link: ""

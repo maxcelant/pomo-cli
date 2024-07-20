@@ -27,7 +27,9 @@ func handleSessionCommand(session *session.Session, subcommands []string) {
 }
 
 func handleConfigCommand(subcommands []string) {
-	options, err := subcommand.Handler(subcommands, map[string]interface{}{"active": 0, "rest": 0})
+  // todo: read from file first and populate the values there into our defaults
+  // so that we don't override them 
+  options, err := subcommand.Handler(subcommands, map[string]interface{}{"active": 0, "rest": 0, "link":""})
 	if err != nil {
 		fmt.Printf("%s", err)
 		os.Exit(1)
@@ -45,7 +47,7 @@ func main() {
 
 	sm := manager.New(state.Get(state.INIT))
 	timer := timer.New()
-	session := session.New(sm, timer, 0)
+	session := session.New(sm, timer, 1)
 
 	switch args[1] {
 	case "start":
