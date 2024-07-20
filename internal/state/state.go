@@ -36,14 +36,14 @@ func New(id ID, literal string, symbol string, duration int) State {
 var States map[ID]State
 
 func init() {
-  activeDuration := 25
-  restDuration   := 10
+  activeDuration := 1500  // 25 mins 
+  restDuration   := 600   // 10 mins
 
   if config, err := fileio.ReadFromLocalYaml("pomo.yaml"); err != nil {
 		log.Printf("Error reading config file: %s. Using default durations.", err)
 	} else {
-		activeDuration = config.Pomo.Active
-		restDuration = config.Pomo.Rest
+		activeDuration = config.Pomo.Active * 60
+		restDuration = config.Pomo.Rest * 60
 	}
 
   States = map[ID]State{

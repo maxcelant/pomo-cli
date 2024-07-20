@@ -35,3 +35,9 @@ func (t Timer) Time(cb TimerCallback) {
 func (t *Timer) SetDuration(duration int) {
 	t.duration = duration
 }
+
+func (t Timer) FormatDuration(duration int) (int, int) {
+  minutes := duration / 60
+  seconds := duration % 60
+  return minutes, seconds
+}

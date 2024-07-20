@@ -40,7 +40,8 @@ func (s Session) loop(nextState state.ID) {
     fmt.Println("🍎 Time to focus")
     fmt.Printf("   State: %s %s\n", s.State.Literal, s.State.Symbol)
     fmt.Printf("   Interval: %d\n", s.intervals)
-    fmt.Printf("   Time Remaining: %ds\n", s.State.Duration-t)
+    m, s := s.timer.FormatDuration(s.State.Duration-t)
+    fmt.Printf("   Time Remaining: %dm %ds\n", m, s)
 	})
 	s.awaitUserResponse()
 }
