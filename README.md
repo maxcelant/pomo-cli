@@ -29,16 +29,6 @@ $ pomo start
 - `-l, --log`: It will prompt you to log your accomplishments after every rest.
 
 
-You can start your pomodoro timer server with `pomo server` (NOT IMPLEMENTED YET)
-
-```
-$ pomo server
-
-  🍎 Pomo server running on port 3000!
-```
-
-- `-p, --port`: denote which port you want to run the server on.
-
 You can set your active, rest times, and more with `pomo config`.
 
 ```

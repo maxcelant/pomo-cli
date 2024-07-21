@@ -22,13 +22,21 @@ func (t Timer) countdown(out chan<- int) {
 	close(out)
 }
 
-func (t Timer) Time(cb TimerCallback) {
+func (t Timer) Time(stopChan <-chan struct{}, cb TimerCallback) {
 	out := make(chan int)
 
 	go t.countdown(out)
 
-	for time := range out {
-		cb(time)
+	for {
+		select {
+		case <-stopChan:
+			return
+		case time, ok := <-out:
+			if !ok {
+				return
+			}
+			cb(time)
+		}
 	}
 }
 

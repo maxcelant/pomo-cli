@@ -29,10 +29,24 @@ func (s *Session) Start(options map[string]interface{}) {
 	}
 }
 
+func stopSignal(stopChan chan<- struct{}) {
+	reader := bufio.NewReader(os.Stdin)
+  for {
+    input, _ := reader.ReadString('\n')
+    if input == "s\n" {
+      stopChan <- struct{}{}
+      return
+    }
+  }
+}
+
 func (s Session) loop(nextState state.ID) {
-	s.UpdateState(state.Get(nextState))
+  stopChan := make(chan struct{})
+  go stopSignal(stopChan)
+	
+  s.UpdateState(state.Get(nextState))
 	s.timer.SetDuration(s.State.Duration)
-	s.timer.Time(func(t int) {
+	s.timer.Time(stopChan, func(t int) {
     if s.options["silent"] == true {
       return 
     }
@@ -42,6 +56,7 @@ func (s Session) loop(nextState state.ID) {
     fmt.Printf("   Interval: %d\n", s.intervals)
     m, s := s.timer.FormatDuration(s.State.Duration-t)
     fmt.Printf("   Time Remaining: %dm %ds\n", m, s)
+    fmt.Printf("   Press [s] to stop timer: ")
 	})
 	s.awaitUserResponse()
 }
