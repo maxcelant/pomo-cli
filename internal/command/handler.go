@@ -38,7 +38,7 @@ func NewConfigCommandHandler(subcommands []string) *ConfigCommandHandler {
 }
 
 func (s *StartCommandHandler) Handle() {
-	options, err := subcommand.Handler(s.subcommands, map[string]interface{}{"silent": false})
+	options, err := subcommand.Handler(s.subcommands, map[string]interface{}{"minimal": false})
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
     screen.Usage()

@@ -15,8 +15,8 @@ var flags = map[string]Flag{
 	"--active": {Datatype: "int", Name: "active"},
 	"-r":       {Datatype: "int", Name: "rest"},
 	"--rest":   {Datatype: "int", Name: "rest"},
-	"-s":       {Datatype: "bool", Name: "silent"},
-	"--silent": {Datatype: "bool", Name: "silent"},
+	"-m":       {Datatype: "bool", Name: "minimal"},
+	"--minimal": {Datatype: "bool", Name: "minimal"},
 	"-l":       {Datatype: "string", Name: "link"},
 	"--link":   {Datatype: "string", Name: "link"},
 }

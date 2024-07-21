@@ -24,7 +24,7 @@ $ pomo start
    Time Remaining: 24:59s
 ```
 
-- `-s, --silent`: Will run in the background and only notify when your time is up.
+- `-m, --minimal`: Minimal cli display
 - `-i, --intervals`: Set the number of intervals you want to accomplish.
 - `-l, --log`: It will prompt you to log your accomplishments after every rest.
 
