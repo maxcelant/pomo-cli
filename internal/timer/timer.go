@@ -2,7 +2,6 @@ package timer
 
 import "time"
 
-type TimerCallback func(currentTime int)
 
 type Timer struct {
 	duration int
@@ -12,7 +11,7 @@ func New() Timer {
 	return Timer{0}
 }
 
-func (t Timer) countdown(out chan<- int) {
+func (t Timer) Countdown(out chan<- int) {
 	for i := 0; i < t.duration; i++ {
 		select {
 		case <-time.After(1 * time.Second):
@@ -22,23 +21,6 @@ func (t Timer) countdown(out chan<- int) {
 	close(out)
 }
 
-func (t Timer) Time(stopChan <-chan struct{}, cb TimerCallback) {
-	out := make(chan int)
-
-	go t.countdown(out)
-
-	for {
-		select {
-		case <-stopChan:
-			return
-		case time, ok := <-out:
-			if !ok {
-				return
-			}
-			cb(time)
-		}
-	}
-}
 
 func (t *Timer) SetDuration(duration int) {
 	t.duration = duration

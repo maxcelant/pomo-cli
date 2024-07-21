@@ -9,6 +9,8 @@ import "github.com/maxcelant/pomo-cli/internal/timer"
 import "github.com/maxcelant/pomo-cli/internal/state"
 import "github.com/maxcelant/pomo-cli/internal/screen"
 
+type TimerCallback func(currentTime int)
+
 type Session struct {
 	manager.StateManager
 	timer     timer.Timer
@@ -29,36 +31,64 @@ func (s *Session) Start(options map[string]interface{}) {
 	}
 }
 
-func stopSignal(stopChan chan<- struct{}) {
-	reader := bufio.NewReader(os.Stdin)
-  for {
-    input, _ := reader.ReadString('\n')
-    if input == "s\n" {
-      stopChan <- struct{}{}
-      return
-    }
-  }
+func (s Session) handleInput(inputChan chan<- string) {
+  reader := bufio.NewReader(os.Stdin)
+	for {
+		input, _ := reader.ReadString('\n')
+		inputChan <- strings.TrimSpace(input)
+	}
 }
 
 func (s Session) loop(nextState state.ID) {
-  stopChan := make(chan struct{})
-  go stopSignal(stopChan)
-	
+  inputChan := make(chan string)
+  go s.handleInput(inputChan)
+
   s.UpdateState(state.Get(nextState))
 	s.timer.SetDuration(s.State.Duration)
-	s.timer.Time(stopChan, func(t int) {
-    if s.options["silent"] == true {
-      return 
-    }
-    screen.Clear()
-    fmt.Println("🍎 Time to focus")
-    fmt.Printf("   State: %s %s\n", s.State.Literal, s.State.Symbol)
-    fmt.Printf("   Interval: %d\n", s.intervals)
-    m, s := s.timer.FormatDuration(s.State.Duration-t)
-    fmt.Printf("   Time Remaining: %dm %ds\n", m, s)
-    fmt.Printf("   Press [s] to stop timer: ")
+
+	s.Time(nextState, inputChan, func(t int) {
+    s.PromptText(t)
 	})
 	s.awaitUserResponse()
+}
+
+func (s *Session) Time(nextState state.ID, inputChan chan string, cb TimerCallback) {
+	out := make(chan int)
+
+	go s.timer.Countdown(out)
+
+	for {
+		select {
+    case input := <-inputChan:
+      if input == "" && s.State.Id == state.PAUSE {
+        s.UpdateState(state.Get(nextState))
+      } else if input == "" && s.State.Id != state.PAUSE {
+        s.UpdateState(state.Get(state.PAUSE))
+      }
+		case time, ok := <-out:
+			if !ok {
+				return
+			}
+			cb(time)
+		}
+	}
+}
+
+func (s Session) PromptText(t int) {
+  screen.Clear()
+  if s.options["silent"] == true {
+    return 
+  }
+  if s.State.Id == state.PAUSE {
+    fmt.Printf("🍎 Timer paused!\nPress [Enter] to unpause: ")
+    return
+  }
+  fmt.Println("🍎 Time to focus")
+  fmt.Printf("   State: %s %s\n", s.State.Literal, s.State.Symbol)
+  fmt.Printf("   Interval: %d\n", s.intervals)
+  min, sec := s.timer.FormatDuration(s.State.Duration-t)
+  fmt.Printf("   Time Remaining: %dm %ds\n", min, sec)
+  fmt.Printf("   Press [Enter] to pause timer: ")
 }
 
 func (s *Session) awaitUserResponse() {
