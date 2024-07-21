@@ -74,9 +74,13 @@ func (s *Session) Time(nextState state.ID, inputChan chan string, cb TimerCallba
 	}
 }
 
+// todo: refactor this
 func (s Session) PromptText(t int) {
   screen.Clear()
   if s.options["silent"] == true {
+    min, _ := s.timer.FormatDuration(s.State.Duration)
+    fmt.Printf("🍎 State: %s %s %dm\n", s.State.Literal, s.State.Symbol, min)
+    fmt.Printf("   Press [Enter] to pause timer: ")
     return 
   }
   if s.State.Id == state.PAUSE {
