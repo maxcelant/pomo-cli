@@ -35,11 +35,11 @@ func Handler(subcommands []string, out map[string]interface{}) (map[string]inter
 
 		f, found := flags[cur]
 		if !found {
-			return nil, fmt.Errorf("flag '%s' is not a viable flag", cur)
+			return nil, fmt.Errorf("flag '%s' is not a viable flag\n", cur)
 		}
 
 		if (f.Datatype == "int" || f.Datatype == "string") && i+1 >= len(subcommands) {
-			return nil, fmt.Errorf("flag '%s' expects a value but none was provided", cur)
+			return nil, fmt.Errorf("flag '%s' expects a value but none was provided\n", cur)
 		}
 
 		switch f.Datatype {
@@ -56,7 +56,7 @@ func Handler(subcommands []string, out map[string]interface{}) (map[string]inter
 		case "bool":
 			out[f.Name] = true
 		default:
-			return nil, fmt.Errorf("datatype '%s' not implemented yet", f.Datatype)
+			return nil, fmt.Errorf("datatype '%s' not implemented yet\n", f.Datatype)
 		}
 	}
 

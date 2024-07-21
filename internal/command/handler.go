@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/maxcelant/pomo-cli/internal/fileio"
+	"github.com/maxcelant/pomo-cli/internal/screen"
 	"github.com/maxcelant/pomo-cli/internal/session"
 	"github.com/maxcelant/pomo-cli/internal/subcommand"
 )
@@ -40,6 +41,7 @@ func (s *StartCommandHandler) Handle() {
 	options, err := subcommand.Handler(s.subcommands, map[string]interface{}{"silent": false})
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
+    screen.Usage()
 		os.Exit(1)
 	}
   s.Start(options)
@@ -49,6 +51,7 @@ func (c *ConfigCommandHandler) Handle() {
   options, err := subcommand.Handler(c.subcommands, map[string]interface{}{"active": 0, "rest": 0, "link":""})
 	if err != nil {
 		fmt.Printf("%s", err)
+    screen.Usage()
 		os.Exit(1)
 	}
   fileio.WriteToLocalYaml(options)
