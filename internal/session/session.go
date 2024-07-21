@@ -84,10 +84,6 @@ func (s *Session) Time(nextState state.ID, inputChan chan string, controlChan ch
 func (s Session) PromptText(t int) {
 	screen.Clear()
 	min, sec := s.timer.FormatDuration(s.State.Duration - t)
-	if s.State.Id == state.PAUSE {
-		fmt.Printf("🍎 Timer paused!\nPress [Enter] to unpause: ")
-		return
-	}
 	if s.options["minimal"] == true {
 		fmt.Printf("🍎 State: %s %s %d:%d\n", s.State.Literal, s.State.Symbol, min, sec)
 		fmt.Printf("   Press [Enter] to pause timer: ")
