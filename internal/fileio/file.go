@@ -1,4 +1,3 @@
-
 package fileio
 
 import "fmt"
@@ -7,9 +6,9 @@ import "path/filepath"
 import "gopkg.in/yaml.v2"
 
 type ConfigOptions struct {
-  Active int `yaml:"active"`
-  Rest   int `yaml:"rest"`
-  Link   string `yaml:"link"`
+	Active int    `yaml:"active"`
+	Rest   int    `yaml:"rest"`
+	Link   string `yaml:"link"`
 }
 
 type PomoConfig struct {
@@ -39,16 +38,16 @@ func getConfigFilePath() (string, error) {
 }
 
 func WriteToLocalYaml(o map[string]interface{}) error {
-  opt := convertToConfigOptions(o)
-  data, err := yaml.Marshal(&opt)
+	opt := convertToConfigOptions(o)
+	data, err := yaml.Marshal(&opt)
 	if err != nil {
 		return fmt.Errorf("could not marshal to YAML: %w", err)
 	}
 
-  configFilePath, err := getConfigFilePath()
-  if err != nil {
-    return err
-  }
+	configFilePath, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
 
 	err = os.WriteFile(configFilePath, data, 0644)
 	if err != nil {
@@ -59,20 +58,20 @@ func WriteToLocalYaml(o map[string]interface{}) error {
 }
 
 func ReadFromLocalYaml(filename string) (*PomoConfig, error) {
-  configFilePath, err := getConfigFilePath()
-  if err != nil {
-    return nil, err
-  }
+	configFilePath, err := getConfigFilePath()
+	if err != nil {
+		return nil, err
+	}
 
 	data, err := os.ReadFile(configFilePath)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 
 	var config PomoConfig
 	err = yaml.Unmarshal(data, &config)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 
 	return &config, nil

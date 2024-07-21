@@ -11,14 +11,14 @@ type Flag struct {
 }
 
 var flags = map[string]Flag{
-	"-a":       {Datatype: "int", Name: "active"},
-	"--active": {Datatype: "int", Name: "active"},
-	"-r":       {Datatype: "int", Name: "rest"},
-	"--rest":   {Datatype: "int", Name: "rest"},
-	"-m":       {Datatype: "bool", Name: "minimal"},
+	"-a":        {Datatype: "int", Name: "active"},
+	"--active":  {Datatype: "int", Name: "active"},
+	"-r":        {Datatype: "int", Name: "rest"},
+	"--rest":    {Datatype: "int", Name: "rest"},
+	"-m":        {Datatype: "bool", Name: "minimal"},
 	"--minimal": {Datatype: "bool", Name: "minimal"},
-	"-l":       {Datatype: "string", Name: "link"},
-	"--link":   {Datatype: "string", Name: "link"},
+	"-l":        {Datatype: "string", Name: "link"},
+	"--link":    {Datatype: "string", Name: "link"},
 }
 
 func handleInt(f Flag, value string) (int, error) {
@@ -50,9 +50,9 @@ func Handler(subcommands []string, out map[string]interface{}) (map[string]inter
 			}
 			out[f.Name] = value
 			i++
-    case "string":
-      out[f.Name] = subcommands[i+1]
-      i++
+		case "string":
+			out[f.Name] = subcommands[i+1]
+			i++
 		case "bool":
 			out[f.Name] = true
 		default:

@@ -1,4 +1,3 @@
-
 package command
 
 import (
@@ -12,50 +11,50 @@ import (
 )
 
 type Handler interface {
-  Handle() 
+	Handle()
 }
 
 type StartCommandHandler struct {
-  *session.Session
-  subcommands []string
+	*session.Session
+	subcommands []string
 }
 
 type ConfigCommandHandler struct {
-  subcommands []string
+	subcommands []string
 }
 
 func NewStartCommandHandler(session *session.Session, subcommands []string) *StartCommandHandler {
-  return &StartCommandHandler{
-    session,
-    subcommands,
-  }
+	return &StartCommandHandler{
+		session,
+		subcommands,
+	}
 }
 
 func NewConfigCommandHandler(subcommands []string) *ConfigCommandHandler {
-  return &ConfigCommandHandler{
-    subcommands,
-  }
+	return &ConfigCommandHandler{
+		subcommands,
+	}
 }
 
 func (s *StartCommandHandler) Handle() {
 	options, err := subcommand.Handler(s.subcommands, map[string]interface{}{"minimal": false})
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
-    screen.Usage()
+		screen.Usage()
 		os.Exit(1)
 	}
-  s.Start(options)
+	s.Start(options)
 }
 
 func (c *ConfigCommandHandler) Handle() {
-  options, err := subcommand.Handler(c.subcommands, map[string]interface{}{"active": 0, "rest": 0, "link":""})
+	options, err := subcommand.Handler(c.subcommands, map[string]interface{}{"active": 0, "rest": 0, "link": ""})
 	if err != nil {
 		fmt.Printf("%s", err)
-    screen.Usage()
+		screen.Usage()
 		os.Exit(1)
 	}
-  fileio.WriteToLocalYaml(options)
-  fmt.Println("~/.pomo/pomo.yaml updated successfully ✅")
+	fileio.WriteToLocalYaml(options)
+	fmt.Println("~/.pomo/pomo.yaml updated successfully ✅")
 }
 
 func NewHandler(commandName string, session *session.Session, subcommands []string) (Handler, error) {

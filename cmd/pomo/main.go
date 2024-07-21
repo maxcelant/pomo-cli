@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 
@@ -23,15 +22,15 @@ func main() {
 
 	sm := manager.New(state.Get(state.INIT))
 	timer := timer.New()
-  reader := bufio.NewReader(os.Stdin)
-	session := session.New(sm, timer, 1, reader)
+	// reader := bufio.NewReader(os.Stdin)
+	session := session.New(sm, timer, 1)
 
-  handler, err := command.NewHandler(args[1], session, args[2:])
-  if err != nil {
-    fmt.Println("Error: ", err)
-    screen.Usage()
-    os.Exit(1)
-  }
+	handler, err := command.NewHandler(args[1], session, args[2:])
+	if err != nil {
+		fmt.Println("Error: ", err)
+		screen.Usage()
+		os.Exit(1)
+	}
 
-  handler.Handle()
+	handler.Handle()
 }
