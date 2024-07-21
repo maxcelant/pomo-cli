@@ -1,15 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 
+	"github.com/maxcelant/pomo-cli/internal/command"
 	"github.com/maxcelant/pomo-cli/internal/manager"
 	"github.com/maxcelant/pomo-cli/internal/screen"
 	"github.com/maxcelant/pomo-cli/internal/session"
 	"github.com/maxcelant/pomo-cli/internal/state"
 	"github.com/maxcelant/pomo-cli/internal/timer"
-	"github.com/maxcelant/pomo-cli/internal/command"
 )
 
 func main() {
@@ -22,7 +23,8 @@ func main() {
 
 	sm := manager.New(state.Get(state.INIT))
 	timer := timer.New()
-	session := session.New(sm, timer, 1)
+  reader := bufio.NewReader(os.Stdin)
+	session := session.New(sm, timer, 1, reader)
 
   handler, err := command.NewHandler(args[1], session, args[2:])
   if err != nil {

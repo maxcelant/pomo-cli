@@ -19,10 +19,11 @@ type Session struct {
 	timer     timer.Timer
 	intervals int
 	options   map[string]interface{}
+  reader    *bufio.Reader
 }
 
-func New(sm manager.StateManager, t timer.Timer, i int) *Session {
-	return &Session{sm, t, i, make(map[string]interface{})}
+func New(sm manager.StateManager, t timer.Timer, i int, r *bufio.Reader) *Session {
+	return &Session{sm, t, i, make(map[string]interface{}), r}
 }
 
 func (s *Session) Start(options map[string]interface{}) {
@@ -35,9 +36,8 @@ func (s *Session) Start(options map[string]interface{}) {
 }
 
 func (s Session) handleInput(inputChan chan<- string) {
-	reader := bufio.NewReader(os.Stdin)
 	for {
-		input, _ := reader.ReadString('\n')
+		input, _ := s.reader.ReadString('\n')
 		inputChan <- strings.TrimSpace(input)
 	}
 }
@@ -104,8 +104,7 @@ func (s *Session) awaitUserResponse() {
 		fmt.Printf("🍎 Break session done! Ready to start studying?")
 	}
 	fmt.Printf("   [Enter] to continue, or [Q]uit: ")
-	reader := bufio.NewReader(os.Stdin)
-	input, _ := reader.ReadString('\n')
+	input, _ := s.reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 	if input == "q" || input == "Q" {
 		fmt.Printf("  Exiting gracefully...")
