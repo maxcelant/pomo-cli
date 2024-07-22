@@ -13,15 +13,16 @@ type Session struct {
 	manager.StateManager
 	timer     timer.Timer
 	intervals int
-  options   map[string]interface{}
+	options   map[string]interface{}
+	reader    *bufio.Reader
 }
 
-func New(sm manager.StateManager, t timer.Timer, i int) *Session {
-	return &Session{sm, t, i, make(map[string]interface{})}
+func New(sm manager.StateManager, t timer.Timer, i int, reader *bufio.Reader) *Session {
+	return &Session{sm, t, i, make(map[string]interface{}), reader}
 }
 
 func (s *Session) Start(options map[string]interface{}) {
-  s.options = options
+	s.options = options
 	for {
 		s.loop(state.ACTIVE)
 		s.loop(state.REST)
@@ -33,15 +34,15 @@ func (s Session) loop(nextState state.ID) {
 	s.UpdateState(state.Get(nextState))
 	s.timer.SetDuration(s.State.Duration)
 	s.timer.Time(func(t int) {
-    if s.options["silent"] == true {
-      return 
-    }
-    screen.Clear()
-    fmt.Println("🍎 Time to focus")
-    fmt.Printf("   State: %s %s\n", s.State.Literal, s.State.Symbol)
-    fmt.Printf("   Interval: %d\n", s.intervals)
-    m, s := s.timer.FormatDuration(s.State.Duration-t)
-    fmt.Printf("   Time Remaining: %dm %ds\n", m, s)
+		if s.options["silent"] == true {
+			return
+		}
+		screen.Clear()
+		fmt.Println("🍎 Time to focus")
+		fmt.Printf("   State: %s %s\n", s.State.Literal, s.State.Symbol)
+		fmt.Printf("   Interval: %d\n", s.intervals)
+		m, s := s.timer.FormatDuration(s.State.Duration - t)
+		fmt.Printf("   Time Remaining: %dm %ds\n", m, s)
 	})
 	s.awaitUserResponse()
 }
@@ -54,8 +55,7 @@ func (s *Session) awaitUserResponse() {
 		fmt.Printf("🍎 Break session done! Ready to start studying?")
 	}
 	fmt.Printf("   [Enter] to continue, or [Q]uit: ")
-	reader := bufio.NewReader(os.Stdin)
-	input, _ := reader.ReadString('\n')
+	input, _ := s.reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 	if input == "q" || input == "Q" {
 		fmt.Printf("  Exiting gracefully...")

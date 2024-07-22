@@ -37,7 +37,7 @@ func (t *Timer) SetDuration(duration int) {
 }
 
 func (t Timer) FormatDuration(duration int) (int, int) {
-  minutes := duration / 60
-  seconds := duration % 60
-  return minutes, seconds
+	minutes := duration / 60
+	seconds := duration % 60
+	return minutes, seconds
 }
