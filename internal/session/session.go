@@ -10,15 +10,21 @@ import "github.com/maxcelant/pomo-cli/internal/state"
 import "github.com/maxcelant/pomo-cli/internal/screen"
 
 type Session struct {
-	manager.StateManager
-	timer     timer.Timer
-	intervals int
-	options   map[string]interface{}
-	reader    *bufio.Reader
+	stateManager manager.StateManager
+	timer        timer.Timer
+	intervals    int
+	options      map[string]interface{}
+	reader       *bufio.Reader
 }
 
-func New(sm manager.StateManager, t timer.Timer, i int, reader *bufio.Reader) *Session {
-	return &Session{sm, t, i, make(map[string]interface{}), reader}
+func New(stateManager manager.StateManager, timer timer.Timer, intervals int, reader *bufio.Reader) *Session {
+	return &Session{
+		stateManager: stateManager,
+		timer:        timer,
+		intervals:    intervals,
+		options:      make(map[string]interface{}),
+		reader:       reader,
+	}
 }
 
 func (s *Session) Start(options map[string]interface{}) {
@@ -31,17 +37,17 @@ func (s *Session) Start(options map[string]interface{}) {
 }
 
 func (s Session) loop(nextState state.ID) {
-	s.UpdateState(state.Get(nextState))
-	s.timer.SetDuration(s.State.Duration)
+	s.stateManager.UpdateState(state.Get(nextState))
+	s.timer.SetDuration(s.stateManager.Duration)
 	s.timer.Time(func(t int) {
 		if s.options["silent"] == true {
 			return
 		}
 		screen.Clear()
 		fmt.Println("🍎 Time to focus")
-		fmt.Printf("   State: %s %s\n", s.State.Literal, s.State.Symbol)
+		fmt.Printf("   State: %s %s\n", s.stateManager.Literal, s.stateManager.Symbol)
 		fmt.Printf("   Interval: %d\n", s.intervals)
-		m, s := s.timer.FormatDuration(s.State.Duration - t)
+		m, s := s.timer.FormatDuration(s.stateManager.Duration - t)
 		fmt.Printf("   Time Remaining: %dm %ds\n", m, s)
 	})
 	s.awaitUserResponse()
@@ -49,7 +55,7 @@ func (s Session) loop(nextState state.ID) {
 
 func (s *Session) awaitUserResponse() {
 	screen.Clear()
-	if s.State.Id == state.ACTIVE {
+	if s.stateManager.Id == state.ACTIVE {
 		fmt.Printf("🍎 Active session done! Ready to start break?")
 	} else {
 		fmt.Printf("🍎 Break session done! Ready to start studying?")

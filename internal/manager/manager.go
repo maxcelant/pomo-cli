@@ -3,7 +3,7 @@ package manager
 import "github.com/maxcelant/pomo-cli/internal/state"
 
 type StateManager struct {
-	State state.State
+	state.State
 }
 
 func New(s state.State) StateManager {
