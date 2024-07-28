@@ -1,22 +1,25 @@
 package timer
 
 import (
-  "time"
-  "fmt"
-  "bufio"
-  "os"
-  "github.com/maxcelant/pomo-cli/internal/screen"
+	"bufio"
+	"fmt"
+	"github.com/maxcelant/pomo-cli/internal/screen"
+	"os"
+	"time"
 )
 
 type TimerCallback func(currentTime int)
 
 type Timer struct {
-	duration int
-  pauseChan chan struct{}
+	duration  int
+	pauseChan chan struct{}
 }
 
 func New() Timer {
-	return Timer{0, make(chan struct{})}
+	return Timer{
+    duration: 0, 
+    pauseChan: make(chan struct{}),
+  }
 }
 
 func (t Timer) countdown(out chan<- int) {
@@ -24,28 +27,28 @@ func (t Timer) countdown(out chan<- int) {
 		select {
 		case <-time.After(1 * time.Second):
 			out <- i
-    case <- t.pauseChan:
-      screen.Clear()
-      fmt.Println("🍎 Session Paused")
-      <-t.pauseChan
+		case <-t.pauseChan:
+			screen.Clear()
+			fmt.Println("🍎 Session Paused")
+			<-t.pauseChan
 		}
 	}
 	close(out)
 }
 
 func (t Timer) listenForPause(reader *bufio.Reader) {
-  for {
+	for {
     _, _ = reader.ReadString('\n')
     t.Swap()
-  }
+	}
 }
 
 func (t Timer) Time(cb TimerCallback) {
 	reader := bufio.NewReader(os.Stdin)
-  out := make(chan int)
-  
-  go t.countdown(out)
-  go t.listenForPause(reader)
+	out := make(chan int)
+
+	go t.countdown(out)
+	go t.listenForPause(reader)
 
 	for time := range out {
 		cb(time)
@@ -53,7 +56,7 @@ func (t Timer) Time(cb TimerCallback) {
 }
 
 func (t *Timer) Swap() {
-  t.pauseChan<-struct{}{}
+	t.pauseChan <- struct{}{}
 }
 
 func (t *Timer) SetDuration(duration int) {

@@ -37,7 +37,7 @@ func NewConfigCommandHandler(subcommands []string) *ConfigCommandHandler {
 }
 
 func (s *StartCommandHandler) Handle() {
-	options, err := subcommand.Handler(s.subcommands, map[string]interface{}{"minimal": false})
+	options, err := subcommand.Handler(s.subcommands, map[string]interface{}{"minimal": false, "intervals": -1})
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		screen.Usage()
@@ -47,11 +47,11 @@ func (s *StartCommandHandler) Handle() {
 }
 
 func (c *ConfigCommandHandler) Handle() {
-  if len(c.subcommands) < 1 {
-    fmt.Println("Error: No flags entered.")
-    screen.Usage()
-    os.Exit(1)
-  }
+	if len(c.subcommands) < 1 {
+		fmt.Println("Error: No flags entered.")
+		screen.Usage()
+		os.Exit(1)
+	}
 	options, err := subcommand.Handler(c.subcommands, map[string]interface{}{"active": 0, "rest": 0, "link": ""})
 	if err != nil {
 		fmt.Printf("%s", err)

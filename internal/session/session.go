@@ -46,10 +46,14 @@ func (s Session) loop(nextState state.ID) {
 		screen.Clear()
 		fmt.Println("🍎 Time to focus")
 		fmt.Printf("   State: %s %s\n", s.stateManager.Literal, s.stateManager.Symbol)
-		fmt.Printf("   Interval: %d\n", s.intervals)
+		if s.options["intervals"] != -1 {
+			fmt.Printf("   Interval: %d/%d\n", s.intervals, s.options["intervals"])
+		} else {
+			fmt.Printf("   Interval: %d\n", s.intervals)
+		}
 		m, s := s.timer.FormatDuration(s.stateManager.Duration - t)
 		fmt.Printf("   Time Remaining: %dm %ds\n", m, s)
-    fmt.Print("   Press [Enter] to pause")
+		fmt.Print("   Press [Enter] to pause")
 	})
 	s.awaitUserResponse()
 }
@@ -61,7 +65,7 @@ func (s *Session) awaitUserResponse() {
 	} else {
 		fmt.Printf("🍎 Break session done! Ready to start studying?")
 	}
-	fmt.Printf("   [Enter] to continue, or [Q]uit: ")
+	fmt.Printf("   [C]ontinue, or [Q]uit: ")
 	input, _ := s.reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 	if input == "q" || input == "Q" {

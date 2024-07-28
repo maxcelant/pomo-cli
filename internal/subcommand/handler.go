@@ -11,14 +11,16 @@ type Flag struct {
 }
 
 var flags = map[string]Flag{
-	"-a":        {Datatype: "int", Name: "active"},
-	"--active":  {Datatype: "int", Name: "active"},
-	"-r":        {Datatype: "int", Name: "rest"},
-	"--rest":    {Datatype: "int", Name: "rest"},
-	"-m":        {Datatype: "bool", Name: "minimal"},
-	"--minimal": {Datatype: "bool", Name: "minimal"},
-	"-l":        {Datatype: "string", Name: "link"},
-	"--link":    {Datatype: "string", Name: "link"},
+	"-a":          {Datatype: "int", Name: "active"},
+	"--active":    {Datatype: "int", Name: "active"},
+	"-r":          {Datatype: "int", Name: "rest"},
+	"--rest":      {Datatype: "int", Name: "rest"},
+	"-m":          {Datatype: "bool", Name: "minimal"},
+	"--minimal":   {Datatype: "bool", Name: "minimal"},
+	"-i":          {Datatype: "bool", Name: "intervals"},
+	"--intervals": {Datatype: "int", Name: "intervals"},
+	"-l":          {Datatype: "string", Name: "link"},
+	"--link":      {Datatype: "string", Name: "link"},
 }
 
 func handleInt(f Flag, value string) (int, error) {
