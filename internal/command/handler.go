@@ -64,7 +64,7 @@ func (c *ConfigCommandHandler) Handle() {
 
 func NewHandler(commandName string, session *session.Session, subcommands []string) (Handler, error) {
 	switch commandName {
-	case "start", "session":
+	case "start":
 		return NewStartCommandHandler(session, subcommands), nil
 	case "config":
 		return NewConfigCommandHandler(subcommands), nil
