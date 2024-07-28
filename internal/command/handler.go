@@ -47,6 +47,11 @@ func (s *StartCommandHandler) Handle() {
 }
 
 func (c *ConfigCommandHandler) Handle() {
+  if len(c.subcommands) < 1 {
+    fmt.Println("Error: No flags entered.")
+    screen.Usage()
+    os.Exit(1)
+  }
 	options, err := subcommand.Handler(c.subcommands, map[string]interface{}{"active": 0, "rest": 0, "link": ""})
 	if err != nil {
 		fmt.Printf("%s", err)
