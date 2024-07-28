@@ -49,6 +49,7 @@ func (s Session) loop(nextState state.ID) {
 		fmt.Printf("   Interval: %d\n", s.intervals)
 		m, s := s.timer.FormatDuration(s.stateManager.Duration - t)
 		fmt.Printf("   Time Remaining: %dm %ds\n", m, s)
+    fmt.Print("   Press [Enter] to pause")
 	})
 	s.awaitUserResponse()
 }

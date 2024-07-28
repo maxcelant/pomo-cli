@@ -1,15 +1,22 @@
 package timer
 
-import "time"
+import (
+  "time"
+  "fmt"
+  "bufio"
+  "os"
+  "github.com/maxcelant/pomo-cli/internal/screen"
+)
 
 type TimerCallback func(currentTime int)
 
 type Timer struct {
 	duration int
+  pauseChan chan struct{}
 }
 
 func New() Timer {
-	return Timer{0}
+	return Timer{0, make(chan struct{})}
 }
 
 func (t Timer) countdown(out chan<- int) {
@@ -17,19 +24,36 @@ func (t Timer) countdown(out chan<- int) {
 		select {
 		case <-time.After(1 * time.Second):
 			out <- i
+    case <- t.pauseChan:
+      screen.Clear()
+      fmt.Println("🍎 Session Paused")
+      <-t.pauseChan
 		}
 	}
 	close(out)
 }
 
-func (t Timer) Time(cb TimerCallback) {
-	out := make(chan int)
+func (t Timer) listenForPause(reader *bufio.Reader) {
+  for {
+    _, _ = reader.ReadString('\n')
+    t.Swap()
+  }
+}
 
-	go t.countdown(out)
+func (t Timer) Time(cb TimerCallback) {
+	reader := bufio.NewReader(os.Stdin)
+  out := make(chan int)
+  
+  go t.countdown(out)
+  go t.listenForPause(reader)
 
 	for time := range out {
 		cb(time)
 	}
+}
+
+func (t *Timer) Swap() {
+  t.pauseChan<-struct{}{}
 }
 
 func (t *Timer) SetDuration(duration int) {
