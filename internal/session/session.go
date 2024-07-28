@@ -15,6 +15,7 @@ type Session struct {
 	intervals    int
 	options      map[string]interface{}
 	reader       *bufio.Reader
+	pauseChan    chan struct{}
 }
 
 func New(stateManager manager.StateManager, timer timer.Timer, intervals int, reader *bufio.Reader) *Session {
@@ -24,6 +25,7 @@ func New(stateManager manager.StateManager, timer timer.Timer, intervals int, re
 		intervals:    intervals,
 		options:      make(map[string]interface{}),
 		reader:       reader,
+		pauseChan:    make(chan struct{}),
 	}
 }
 
@@ -39,8 +41,12 @@ func (s *Session) Start(options map[string]interface{}) {
 func (s Session) loop(nextState state.ID) {
 	s.stateManager.UpdateState(state.Get(nextState))
 	s.timer.SetDuration(s.stateManager.Duration)
-	s.timer.Time(func(t int) {
-		if s.options["silent"] == true {
+
+	go s.timer.Time(s.pauseChan, func(t int) {
+		if s.timer.Duration <= 0 {
+			s.stateManager.UpdateState(state.Get(state.WAITING))
+		}
+		if s.options["silent"] == true || t%5 != 0 {
 			return
 		}
 		screen.Clear()
@@ -53,25 +59,29 @@ func (s Session) loop(nextState state.ID) {
 		}
 		m, s := s.timer.FormatDuration(s.stateManager.Duration - t)
 		fmt.Printf("   Time Remaining: %dm %ds\n", m, s)
-		fmt.Print("   Press [Enter] to pause")
+		fmt.Print("   Press [Enter] to pause or [q] to quit")
 	})
-	s.awaitUserResponse()
+
+	s.handlePrompt()
 }
 
-func (s *Session) awaitUserResponse() {
-	screen.Clear()
-	if s.stateManager.Id == state.ACTIVE {
-		fmt.Printf("🍎 Active session done! Ready to start break?")
-	} else {
-		fmt.Printf("🍎 Break session done! Ready to start studying?")
+func (s *Session) handlePrompt() {
+	for {
+		input, _ := s.reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+		if input == "q" || input == "Q" {
+			fmt.Printf("   Exiting gracefully...")
+			os.Exit(0)
+		}
+		if s.stateManager.Id == state.WAITING {
+			return
+		}
+		s.swap()
 	}
-	fmt.Printf("   [C]ontinue, or [Q]uit: ")
-	input, _ := s.reader.ReadString('\n')
-	input = strings.TrimSpace(input)
-	if input == "q" || input == "Q" {
-		fmt.Printf("  Exiting gracefully...")
-		os.Exit(0)
-	}
+}
+
+func (s *Session) swap() {
+	s.pauseChan <- struct{}{}
 }
 
 func (s *Session) incrementInterval() {
